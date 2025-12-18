@@ -6,8 +6,16 @@
 
 프로젝트 루트 디렉토리에서 다음 명령어를 실행하세요:
 
+### Unix/Linux/macOS
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/jcglobeway/team-cursor-settings/main/install.sh | bash
+```
+
+### Windows (PowerShell)
+
+```powershell
+irm https://raw.githubusercontent.com/jcglobeway/team-cursor-settings/main/install.ps1 | iex
 ```
 
 설치 후 Cursor를 재시작하면 바로 사용 가능합니다.
@@ -15,12 +23,12 @@ curl -fsSL https://raw.githubusercontent.com/jcglobeway/team-cursor-settings/mai
 ## 포함된 설정
 
 ### 1. `.cursorrules` - 팀 코딩 규칙
-- 커밋 메시지 작성 규칙 (한국어, 타입 기반)
-- 코드 작성 원칙 (DRY, SRP 등)
-- TypeScript/NestJS 스타일 가이드
+- 이슈 기반 개발 워크플로우
+- 커밋 메시지 작성 규칙 (한국어, 이슈 번호 필수)
+- 일반적인 프로그래밍 원칙 (DRY, SRP, 아키텍처 원칙 등)
 - 에러 처리 및 로깅 규칙
-- Git 브랜치 전략
-- PR 규칙
+- Git Flow 브랜치 전략
+- PR 규칙 및 템플릿
 
 ### 2. Cursor Commands - 팀 공용 명령어
 
@@ -65,10 +73,26 @@ curl -fsSL https://raw.githubusercontent.com/jcglobeway/team-cursor-settings/mai
 3. 체크리스트 기반 자동 리뷰
 ```
 
+#### `/ship` - 전체 워크플로우 자동 진행
+develop 브랜치에서 작업한 변경사항을 이슈 생성부터 PR까지 한 번에 처리합니다.
+
+```bash
+# 사용 예시
+1. develop 브랜치에서 코드 작성 완료
+2. Cursor에서 /ship 실행
+3. AI가 변경사항 분석 → 이슈 생성 → 브랜치 이동 → 커밋 → PR 자동 진행
+```
+
 ## 권장 워크플로우
 
+### 방법 1: 빠른 진행 (추천)
 ```
-코드 작성 → /review (셀프 리뷰) → /commit (커밋) → /pr (PR 생성)
+develop 브랜치에서 코드 작성 → /ship (한 번에 완료!)
+```
+
+### 방법 2: 단계별 진행
+```
+이슈 생성(/branch) → 코드 작성 → /review (셀프 리뷰) → /commit (커밋) → /pr (PR 생성)
 ```
 
 ### 상세 프로세스
@@ -125,7 +149,7 @@ curl -fsSL https://raw.githubusercontent.com/jcglobeway/team-cursor-settings/mai
 
 ### 커밋 메시지
 ```
-[타입] 제목 (50자 이내)
+[타입] 제목 (#이슈번호)
 
 본문 (선택사항)
 - 무엇을 변경했는지
@@ -133,16 +157,19 @@ curl -fsSL https://raw.githubusercontent.com/jcglobeway/team-cursor-settings/mai
 ```
 
 **타입**: `feat`, `fix`, `refactor`, `style`, `docs`, `test`, `chore`
+**이슈 번호**: 필수 항목 (#123 형식)
 
-### 브랜치 전략
+### 브랜치 전략 (Git Flow)
 - `main`: 운영 배포
 - `develop`: 개발 통합
-- `feature/*`: 기능 개발
-- `fix/*`: 버그 수정
-- `hotfix/*`: 긴급 수정
+- `feature/ISSUE-{번호}`: 기능 개발
+- `bugfix/ISSUE-{번호}`: 버그 수정
+- `hotfix/ISSUE-{번호}`: 긴급 수정
+- `chore/ISSUE-{번호}`: 설정/빌드 작업
 
 ### PR 규칙
-- 제목: `[타입] 간결한 설명`
+- 제목: `[ISSUE-{번호}] 기능명`
+- 본문에 `Closes #{이슈번호}` 포함
 - 리뷰어 최소 1명
 - 모든 테스트 통과 필수
 - Squash and Merge 사용
@@ -170,11 +197,16 @@ curl -fsSL https://raw.githubusercontent.com/jcglobeway/team-cursor-settings/mai
 
 ## 업데이트
 
-팀 규칙이 업데이트되면:
+팀 규칙이 업데이트되면 프로젝트 루트에서 재실행:
 
+### Unix/Linux/macOS
 ```bash
-# 프로젝트 루트에서 재실행
 curl -fsSL https://raw.githubusercontent.com/jcglobeway/team-cursor-settings/main/install.sh | bash
+```
+
+### Windows (PowerShell)
+```powershell
+irm https://raw.githubusercontent.com/jcglobeway/team-cursor-settings/main/install.ps1 | iex
 ```
 
 ## 기여하기
