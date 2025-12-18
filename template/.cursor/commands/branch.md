@@ -12,11 +12,22 @@
 # 이슈 목록 확인
 gh issue list
 
-# 새 이슈 생성 (아직 없는 경우)
-gh issue create -t "기능 제목" -b "상세 설명" -l feature
+# 현재 사용자 확인
+gh api user --jq .login
+
+# 사용 가능한 라벨 확인
+gh label list --json name --jq '.[].name'
+
+# 새 이슈 생성 (라벨이 존재하는 경우)
+gh issue create -t "기능 제목" -b "상세 설명" -l feature --assignee @me
+
+# 새 이슈 생성 (라벨이 없는 경우)
+gh issue create -t "기능 제목" -b "상세 설명" --assignee @me
 
 # 이슈 번호 확인 (예: #123)
 ```
+
+**중요**: 라벨은 저장소에 존재하는 것만 사용해야 합니다. 존재하지 않는 라벨을 사용하면 오류가 발생합니다.
 
 ## 2단계: 브랜치 타입 결정
 
@@ -68,9 +79,20 @@ git push -u origin feature/ISSUE-{번호}
 ## GitHub CLI를 사용한 전체 워크플로우
 
 ```bash
-# 1. 이슈 생성
-gh issue create -t "사용자 로그인 기능 구현" -b "JWT 기반 인증 시스템 구현" -l feature
+# 0. 라벨 확인 (선택사항)
+gh label list
+
+# 1. 이슈 생성 (라벨이 존재하는 경우)
+gh issue create -t "사용자 로그인 기능 구현" \
+  -b "JWT 기반 인증 시스템 구현" \
+  -l feature \
+  --assignee @me
 # 출력: Created issue #123
+
+# 1-1. 이슈 생성 (라벨이 없는 경우)
+gh issue create -t "사용자 로그인 기능 구현" \
+  -b "JWT 기반 인증 시스템 구현" \
+  --assignee @me
 
 # 2. 브랜치 생성
 git checkout develop
@@ -108,8 +130,15 @@ gh issue view 123
 
 **AI 응답**:
 ```bash
+# 0단계: 라벨 확인
+gh label list
+# feature 라벨이 존재하는지 확인
+
 # 1단계: 이슈 생성
-gh issue create -t "사용자 프로필 수정 기능" -b "프로필 정보 업데이트 API 및 UI 구현" -l feature
+gh issue create -t "사용자 프로필 수정 기능" \
+  -b "프로필 정보 업데이트 API 및 UI 구현" \
+  -l feature \
+  --assignee @me
 # Created issue #156
 
 # 2단계: 브랜치 생성

@@ -52,7 +52,7 @@ UI 변경이 있는 경우 스크린샷 첨부
 # 1. 변경사항 푸시 (아직 안 한 경우)
 git push origin feature/ISSUE-123
 
-# 2. PR 생성
+# 2. PR 생성 (assignee는 자동으로 현재 사용자)
 gh pr create -B develop -H feature/ISSUE-123 \
   -t "[ISSUE-123] 사용자 인증 기능 구현" \
   -b "$(cat <<EOF
@@ -70,11 +70,14 @@ gh pr create -B develop -H feature/ISSUE-123 \
 - [x] API 엔드포인트 동작 확인
 - [ ] 코드 리뷰 완료
 EOF
-)"
+)" \
+  --assignee @me
 
-# 3. 리뷰어 지정
+# 3. 리뷰어 지정 (선택사항)
 gh pr edit --add-reviewer @username
 ```
+
+**참고**: `--assignee @me`를 사용하면 현재 로그인한 사용자가 자동으로 assignee로 설정됩니다.
 
 ## 5단계: PR 생성 전 체크리스트
 
@@ -103,14 +106,19 @@ git commit -m "[feat] 사용자 인증 기능 구현 (#123)
 # 2. 원격 브랜치에 푸시
 git push origin feature/ISSUE-123
 
-# 3. PR 생성
-gh pr create -B develop -t "[ISSUE-123] 사용자 인증 기능 구현"
+# 3. PR 생성 (assignee 자동 설정)
+gh pr create -B develop \
+  -t "[ISSUE-123] 사용자 인증 기능 구현" \
+  --assignee @me
 
 # 4. 웹 브라우저에서 PR 상세 내용 작성
 gh pr view --web
 
 # 또는 CLI에서 직접 작성
-gh pr create -B develop -t "[ISSUE-123] 사용자 인증 기능 구현" -b "본문 내용..."
+gh pr create -B develop \
+  -t "[ISSUE-123] 사용자 인증 기능 구현" \
+  -b "본문 내용..." \
+  --assignee @me
 ```
 
 ## PR 머지 조건

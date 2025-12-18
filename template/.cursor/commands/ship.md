@@ -26,24 +26,42 @@ develop 브랜치에서 코드 작성 완료 → `/ship` 실행 → 이슈/브�
    - 제목: 변경사항을 한 문장으로 요약
    - 본문: 구현 내용, 기술 스택, 주요 변경사항 상세 기술
 
-3. **이슈 타입 결정**
-   - feature: 새로운 기능 추가
-   - bugfix: 버그 수정
-   - chore: 설정/빌드 작업
+3. **이슈 타입 결정 및 라벨 확인**
+   - 먼저 사용 가능한 라벨 목록 확인:
+     ```bash
+     gh label list --json name --jq '.[].name'
+     ```
+   - 변경사항에 따라 적절한 타입 결정:
+     - feature / feat: 새로운 기능 추가
+     - bugfix / bug / fix: 버그 수정
+     - chore: 설정/빌드 작업
+   - **존재하는 라벨만 사용** (없으면 라벨 없이 생성)
 
-4. **사용자에게 이슈 내용 확인 요청**
+4. **현재 GitHub 사용자 확인**
+   ```bash
+   gh api user --jq .login
+   ```
+   - 이슈의 assignee로 자동 설정
+
+5. **사용자에게 이슈 내용 확인 요청**
    ```
    다음과 같이 이슈를 생성하겠습니다:
 
    제목: [자동 생성된 제목]
    본문: [자동 생성된 본문]
+   Assignee: @me (현재 로그인 사용자)
+   Label: feature (존재하는 경우만)
 
    생성할까요? (y/n/수정)
    ```
 
-5. **GitHub 이슈 생성**
+6. **GitHub 이슈 생성**
    ```bash
-   gh issue create -t "제목" -b "본문" -l [타입]
+   # 라벨이 존재하는 경우
+   gh issue create -t "제목" -b "본문" -l [타입] --assignee @me
+
+   # 라벨이 없는 경우
+   gh issue create -t "제목" -b "본문" --assignee @me
    ```
 
 ### Phase 3: 브랜치 이동
@@ -125,9 +143,11 @@ develop 브랜치에서 코드 작성 완료 → `/ship` 실행 → 이슈/브�
 
 4. **PR 생성**
    ```bash
+   # assignee는 자동으로 현재 사용자(@me)로 설정
    gh pr create -B develop -H feature/ISSUE-156 \
      -t "[ISSUE-156] 제목" \
-     -b "본문"
+     -b "본문" \
+     --assignee @me
    ```
 
 5. **PR URL 표시**
@@ -215,6 +235,10 @@ gh pr close 123
 현재 브랜치: develop ✓
 변경사항: 5개 파일 수정됨 ✓
 
+라벨 확인 중...
+사용 가능한 라벨: feature, bug, enhancement, documentation
+현재 사용자: your-username
+
 변경사항을 분석한 결과:
 - 사용자 프로필 수정 API 구현
 - PATCH /users/:id 엔드포인트 추가
@@ -232,9 +256,12 @@ gh pr close 123
 ## 기술 스택
 - NestJS, TypeORM, Multer
 
+Assignee: @me (your-username)
+Label: feature ✓
+
 생성할까요? (y/n/edit): y
 
-✓ 이슈 #156 생성됨
+✓ 이슈 #156 생성됨 (assignee: @me, label: feature)
 
 브랜치를 feature/ISSUE-156으로 이동하겠습니다...
 ✓ 브랜치 이동 완료
@@ -251,11 +278,11 @@ gh pr close 123
 ✓ 푸시 완료
 
 PR을 생성하겠습니다...
-✓ PR 생성 완료!
+✓ PR 생성 완료! (assignee: @me)
 
 📌 작업 완료!
-- 이슈: #156
-- PR: https://github.com/org/repo/pull/123
+- 이슈: #156 (assignee: @me)
+- PR: https://github.com/org/repo/pull/123 (assignee: @me)
 ```
 
 ### 예시 2: 자동 모드
@@ -266,14 +293,18 @@ PR을 생성하겠습니다...
 [Cursor AI 응답]
 자동 모드로 진행합니다...
 
-✓ 이슈 #157 생성
+라벨 확인 중... ✓
+현재 사용자 확인... ✓
+
+✓ 이슈 #157 생성 (assignee: @me, label: feature)
 ✓ 브랜치 feature/ISSUE-157 생성
 ✓ 커밋 완료
 ✓ 푸시 완료
-✓ PR #124 생성
+✓ PR #124 생성 (assignee: @me)
 
 모든 작업이 완료되었습니다! 🚀
-PR URL: https://github.com/org/repo/pull/124
+- 이슈: #157 (assignee: @me)
+- PR: https://github.com/org/repo/pull/124 (assignee: @me)
 ```
 
 ## 🎯 핵심 포인트
@@ -297,6 +328,11 @@ PR URL: https://github.com/org/repo/pull/124
    - git diff로 변경사항 상세 분석
    - 구체적이고 의미 있는 이슈/커밋 메시지 자동 생성
    - 적절한 이슈 타입 자동 판단
+
+5. **자동 assignee 및 라벨 관리**
+   - Assignee는 항상 현재 로그인 사용자(`@me`)로 자동 설정
+   - 저장소에 존재하는 라벨만 사용 (오류 방지)
+   - 라벨이 없으면 라벨 없이 생성 (유연성)
 
 ## 📚 관련 명령어
 
