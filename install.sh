@@ -107,7 +107,7 @@ else
 fi
 
 # Cursor Commands 다운로드
-COMMANDS=("commit" "pr" "branch" "review")
+COMMANDS=("commit" "pr" "branch" "review" "ship")
 for cmd in "${COMMANDS[@]}"; do
     echo -e "${BLUE}  - .cursor/commands/${cmd}.md 다운로드...${NC}"
     curl -fsSL "${BASE_URL}/.cursor/commands/${cmd}.md" -o ".cursor/commands/${cmd}.md"
@@ -133,16 +133,20 @@ echo "  - .cursor/commands/commit.md"
 echo "  - .cursor/commands/pr.md"
 echo "  - .cursor/commands/branch.md"
 echo "  - .cursor/commands/review.md"
+echo "  - .cursor/commands/ship.md"
 echo ""
 echo -e "${BLUE}다음 단계:${NC}"
 echo "  1. Cursor 에디터를 재시작하세요"
 echo "  2. Cursor에서 다음 명령어를 사용할 수 있습니다:"
+echo "     - /ship    : 전체 워크플로우 자동 진행 (이슈→브랜치→커밋→PR)"
 echo "     - /commit  : 커밋 메시지 생성"
 echo "     - /pr      : PR 생성 가이드"
 echo "     - /branch  : 브랜치 생성 가이드"
 echo "     - /review  : 코드 리뷰 체크리스트"
 echo ""
 echo -e "${BLUE}권장 워크플로우:${NC}"
+echo "  코드 작성 → /ship (한 번에 완료!)"
+echo "  또는"
 echo "  코드 작성 → /review → /commit → /pr"
 echo ""
 echo -e "${YELLOW}문제가 발생하면 팀에 문의하거나 GitHub Issues를 확인하세요:${NC}"
