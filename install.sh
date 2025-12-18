@@ -5,6 +5,13 @@
 
 set -e
 
+# 파이프로 실행되는지 확인 (stdin이 터미널이 아니면 자동 설치)
+if [ ! -t 0 ]; then
+    AUTO_INSTALL=true
+else
+    AUTO_INSTALL=false
+fi
+
 # 색상 정의
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -51,11 +58,16 @@ echo -e "${BLUE}설치 경로: ${CURRENT_DIR}${NC}"
 if [ ! -d ".git" ]; then
     echo -e "${YELLOW}⚠ 경고: 현재 디렉토리가 Git 저장소가 아닙니다.${NC}"
     echo -e "${YELLOW}프로젝트 루트 디렉토리에서 실행하는 것을 권장합니다.${NC}"
-    read -p "계속 진행하시겠습니까? (y/N): " -n 1 -r
-    echo
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        echo -e "${RED}설치를 취소했습니다.${NC}"
-        exit 1
+
+    if [ "$AUTO_INSTALL" = false ]; then
+        read -p "계속 진행하시겠습니까? (y/N): " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            echo -e "${RED}설치를 취소했습니다.${NC}"
+            exit 1
+        fi
+    else
+        echo -e "${BLUE}자동 설치 모드: 계속 진행합니다.${NC}"
     fi
 fi
 echo ""
@@ -76,9 +88,17 @@ if [ -d ".cursor/commands" ]; then
 fi
 
 if [ "$NEED_BACKUP" = true ]; then
-    read -p "기존 파일을 백업하시겠습니까? (Y/n): " -n 1 -r
-    echo
-    if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+    BACKUP_REPLY="Y"
+
+    if [ "$AUTO_INSTALL" = false ]; then
+        read -p "기존 파일을 백업하시겠습니까? (Y/n): " -n 1 -r
+        echo
+        BACKUP_REPLY=$REPLY
+    else
+        echo -e "${BLUE}자동 설치 모드: 기존 파일을 백업합니다.${NC}"
+    fi
+
+    if [[ ! $BACKUP_REPLY =~ ^[Nn]$ ]]; then
         mkdir -p "$BACKUP_DIR"
         [ -f ".cursorrules" ] && cp ".cursorrules" "$BACKUP_DIR/"
         [ -d ".cursor/commands" ] && cp -r ".cursor/commands" "$BACKUP_DIR/"
@@ -154,7 +174,7 @@ echo "  https://github.com/${ORG}/${REPO}/issues"
 echo ""
 
 # 백업 안내
-if [ "$NEED_BACKUP" = true ] && [[ ! $REPLY =~ ^[Nn]$ ]]; then
+if [ "$NEED_BACKUP" = true ] && [[ ! $BACKUP_REPLY =~ ^[Nn]$ ]]; then
     echo -e "${YELLOW}💡 TIP: 백업 파일은 ${BACKUP_DIR}에 저장되어 있습니다.${NC}"
     echo ""
 fi

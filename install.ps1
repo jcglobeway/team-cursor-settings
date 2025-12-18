@@ -5,6 +5,9 @@
 
 $ErrorActionPreference = "Stop"
 
+# 파이프로 실행되는지 확인 (자동 설치 모드)
+$AutoInstall = -not [Console]::IsInputRedirected
+
 # Organization 및 Repository 정보
 $ORG = "jcglobeway"
 $REPO = "team-cursor-settings"
@@ -44,10 +47,15 @@ Write-Host "설치 경로: $CURRENT_DIR" -ForegroundColor Blue
 if (-not (Test-Path ".git")) {
     Write-Host "⚠ 경고: 현재 디렉토리가 Git 저장소가 아닙니다." -ForegroundColor Yellow
     Write-Host "프로젝트 루트 디렉토리에서 실행하는 것을 권장합니다." -ForegroundColor Yellow
-    $continue = Read-Host "계속 진행하시겠습니까? (y/N)"
-    if ($continue -ne 'y' -and $continue -ne 'Y') {
-        Write-Host "설치를 취소했습니다." -ForegroundColor Red
-        exit 1
+
+    if (-not $AutoInstall) {
+        $continue = Read-Host "계속 진행하시겠습니까? (y/N)"
+        if ($continue -ne 'y' -and $continue -ne 'Y') {
+            Write-Host "설치를 취소했습니다." -ForegroundColor Red
+            exit 1
+        }
+    } else {
+        Write-Host "자동 설치 모드: 계속 진행합니다." -ForegroundColor Blue
     }
 }
 Write-Host ""
@@ -68,7 +76,14 @@ if (Test-Path ".cursor\commands") {
 }
 
 if ($NEED_BACKUP) {
-    $backup = Read-Host "기존 파일을 백업하시겠습니까? (Y/n)"
+    $backup = "Y"
+
+    if (-not $AutoInstall) {
+        $backup = Read-Host "기존 파일을 백업하시겠습니까? (Y/n)"
+    } else {
+        Write-Host "자동 설치 모드: 기존 파일을 백업합니다." -ForegroundColor Blue
+    }
+
     if ($backup -ne 'n' -and $backup -ne 'N') {
         New-Item -ItemType Directory -Path $BACKUP_DIR -Force | Out-Null
         if (Test-Path ".cursorrules") {
