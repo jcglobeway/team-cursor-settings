@@ -94,7 +94,9 @@ Write-Host "[5/6] 설정 파일 다운로드 중..." -ForegroundColor Yellow
 # .cursorrules 다운로드
 Write-Host "  - .cursorrules 다운로드..." -ForegroundColor Blue
 try {
-    Invoke-WebRequest -Uri "$BASE_URL/.cursorrules" -OutFile ".cursorrules"
+    $content = gh api repos/$ORG/$REPO/contents/template/.cursorrules --jq '.content' | Out-String
+    $bytes = [System.Convert]::FromBase64String($content.Trim())
+    [System.IO.File]::WriteAllBytes(".cursorrules", $bytes)
     Write-Host "  ✓ .cursorrules 다운로드 완료" -ForegroundColor Green
 }
 catch {
@@ -107,7 +109,9 @@ $COMMANDS = @("commit", "pr", "branch", "review", "ship")
 foreach ($cmd in $COMMANDS) {
     Write-Host "  - .cursor\commands\$cmd.md 다운로드..." -ForegroundColor Blue
     try {
-        Invoke-WebRequest -Uri "$BASE_URL/.cursor/commands/$cmd.md" -OutFile ".cursor\commands\$cmd.md"
+        $content = gh api repos/$ORG/$REPO/contents/template/.cursor/commands/$cmd.md --jq '.content' | Out-String
+        $bytes = [System.Convert]::FromBase64String($content.Trim())
+        [System.IO.File]::WriteAllBytes(".cursor\commands\$cmd.md", $bytes)
         Write-Host "  ✓ $cmd.md 다운로드 완료" -ForegroundColor Green
     }
     catch {

@@ -98,7 +98,7 @@ echo -e "${YELLOW}[5/6] 설정 파일 다운로드 중...${NC}"
 
 # .cursorrules 다운로드
 echo -e "${BLUE}  - .cursorrules 다운로드...${NC}"
-curl -fsSL "${BASE_URL}/.cursorrules" -o .cursorrules
+gh api repos/${ORG}/${REPO}/contents/template/.cursorrules --jq '.content' | base64 -d > .cursorrules
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}  ✓ .cursorrules 다운로드 완료${NC}"
 else
@@ -110,7 +110,7 @@ fi
 COMMANDS=("commit" "pr" "branch" "review" "ship")
 for cmd in "${COMMANDS[@]}"; do
     echo -e "${BLUE}  - .cursor/commands/${cmd}.md 다운로드...${NC}"
-    curl -fsSL "${BASE_URL}/.cursor/commands/${cmd}.md" -o ".cursor/commands/${cmd}.md"
+    gh api repos/${ORG}/${REPO}/contents/template/.cursor/commands/${cmd}.md --jq '.content' | base64 -d > ".cursor/commands/${cmd}.md"
     if [ $? -eq 0 ]; then
         echo -e "${GREEN}  ✓ ${cmd}.md 다운로드 완료${NC}"
     else

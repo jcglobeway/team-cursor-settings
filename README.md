@@ -4,18 +4,23 @@
 
 ## 빠른 시작 (Quick Start)
 
+**사전 요구사항**: `gh` CLI가 설치되어 있고 인증된 상태여야 합니다.
+
 프로젝트 루트 디렉토리에서 다음 명령어를 실행하세요:
 
 ### Unix/Linux/macOS
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/jcglobeway/team-cursor-settings/main/install.sh | bash
+# 설치 스크립트 다운로드 및 실행
+gh api repos/jcglobeway/team-cursor-settings/contents/install.sh --jq '.content' | base64 -d | bash
 ```
 
 ### Windows (PowerShell)
 
 ```powershell
-irm https://raw.githubusercontent.com/jcglobeway/team-cursor-settings/main/install.ps1 | iex
+# 설치 스크립트 다운로드 및 실행
+$script = gh api repos/jcglobeway/team-cursor-settings/contents/install.ps1 --jq '.content' | Out-String
+[System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($script)) | iex
 ```
 
 설치 후 Cursor를 재시작하면 바로 사용 가능합니다.
@@ -201,12 +206,13 @@ develop 브랜치에서 코드 작성 → /ship (한 번에 완료!)
 
 ### Unix/Linux/macOS
 ```bash
-curl -fsSL https://raw.githubusercontent.com/jcglobeway/team-cursor-settings/main/install.sh | bash
+gh api repos/jcglobeway/team-cursor-settings/contents/install.sh --jq '.content' | base64 -d | bash
 ```
 
 ### Windows (PowerShell)
 ```powershell
-irm https://raw.githubusercontent.com/jcglobeway/team-cursor-settings/main/install.ps1 | iex
+$script = gh api repos/jcglobeway/team-cursor-settings/contents/install.ps1 --jq '.content' | Out-String
+[System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($script)) | iex
 ```
 
 ## 기여하기
